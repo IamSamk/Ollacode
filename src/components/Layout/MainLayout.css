@@ -1,0 +1,82 @@
+.main-layout {
+  height: 100vh;
+  width: 100vw;
+  display: flex;
+  flex-direction: column;
+  background-color: #1e1e1e;
+  color: #cccccc;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.layout-container {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+}
+
+.center-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.editor-terminal-container {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+}
+
+.editor-container {
+  flex: 1;
+  display: flex;
+  overflow: hidden;
+}
+
+.terminal-container {
+  border-left: 1px solid #3e3e3e;
+  background-color: #1e1e1e;
+  min-width: 300px;
+  max-width: 600px;
+}
+
+.chat-container {
+  border-top: 1px solid #3e3e3e;
+  background-color: #1e1e1e;
+  min-height: 200px;
+  max-height: 400px;
+}
+
+/* Resizable borders */
+.sidebar-resize-handle {
+  width: 4px;
+  background-color: #3e3e3e;
+  cursor: col-resize;
+  position: relative;
+}
+
+.sidebar-resize-handle:hover {
+  background-color: #007acc;
+}
+
+.terminal-resize-handle {
+  width: 4px;
+  background-color: #3e3e3e;
+  cursor: col-resize;
+  position: relative;
+}
+
+.terminal-resize-handle:hover {
+  background-color: #007acc;
+}
+
+.chat-resize-handle {
+  height: 4px;
+  background-color: #3e3e3e;
+  cursor: row-resize;
+  position: relative;
+}
+
+.chat-resize-handle:hover {
+  background-color: #007acc;
+}

@@ -1,0 +1,107 @@
+.terminal-component {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background-color: #1e1e1e;
+}
+
+.terminal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #2d2d30;
+  border-bottom: 1px solid #3e3e3e;
+  padding: 0;
+  min-height: 35px;
+}
+
+.terminal-tabs {
+  display: flex;
+  align-items: center;
+}
+
+.terminal-tab {
+  display: flex;
+  align-items: center;
+  padding: 8px 12px;
+  background-color: #2d2d30;
+  border-right: 1px solid #3e3e3e;
+  cursor: pointer;
+  user-select: none;
+  font-size: 13px;
+  color: #cccccc;
+}
+
+.terminal-tab:hover {
+  background-color: #37373d;
+}
+
+.terminal-tab.active {
+  background-color: #1e1e1e;
+  border-bottom: 2px solid #007acc;
+}
+
+.terminal-tab-name {
+  margin-right: 8px;
+}
+
+.terminal-close-button {
+  background: none;
+  border: none;
+  color: #858585;
+  cursor: pointer;
+  padding: 2px;
+  border-radius: 2px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.terminal-close-button:hover {
+  background-color: #424242;
+  color: #cccccc;
+}
+
+.terminal-actions {
+  display: flex;
+  align-items: center;
+  padding-right: 8px;
+}
+
+.terminal-action-button {
+  background: none;
+  border: none;
+  color: #858585;
+  cursor: pointer;
+  padding: 6px 8px;
+  border-radius: 3px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 4px;
+}
+
+.terminal-action-button:hover {
+  background-color: #37373d;
+  color: #cccccc;
+}
+
+.terminal-container {
+  flex: 1;
+  padding: 8px;
+  background-color: #1e1e1e;
+  overflow: hidden;
+}
+
+/* XTerm overrides */
+.terminal-container .xterm {
+  font-family: 'Consolas', 'Courier New', monospace !important;
+}
+
+.terminal-container .xterm-viewport {
+  background-color: #1e1e1e !important;
+}
+
+.terminal-container .xterm-screen {
+  background-color: #1e1e1e !important;
+}
