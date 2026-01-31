@@ -28,13 +28,26 @@
   color: #cccccc;
 }
 
-.model-badge {
-  padding: 4px 10px;
-  background: #0e639c;
-  border-radius: 12px;
-  font-size: 12px;
-  color: white;
+.model-selector {
+  padding: 6px 12px;
+  background: #2d2d30;
+  border: 1px solid #3e3e42;
+  border-radius: 6px;
+  color: #cccccc;
+  font-size: 13px;
   font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.model-selector:hover {
+  border-color: #007acc;
+  background: #37373d;
+}
+
+.model-selector:focus {
+  outline: none;
+  border-color: #007acc;
 }
 
 .chat-controls {
@@ -123,6 +136,114 @@
   border-color: #007acc;
 }
 
+.searching-indicator {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px;
+  background: #2d2d30;
+  border-radius: 8px;
+  color: #cccccc;
+  border-left: 3px solid #007acc;
+}
+
+.searching-indicator .spinning {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.search-sources {
+  padding: 16px;
+  background: #252526;
+  border-radius: 8px;
+  border-left: 3px solid #0e639c;
+  margin: 12px 0;
+}
+
+.search-sources h4 {
+  margin: 0 0 16px 0;
+  font-size: 14px;
+  color: #cccccc;
+  font-weight: 600;
+}
+
+.sources-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 12px;
+}
+
+.source-card {
+  display: flex;
+  gap: 12px;
+  padding: 12px;
+  background: #1e1e1e;
+  border: 1px solid #3e3e42;
+  border-radius: 8px;
+  text-decoration: none;
+  color: inherit;
+  transition: all 0.2s;
+}
+
+.source-card:hover {
+  border-color: #007acc;
+  background: #2d2d30;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.source-index {
+  flex-shrink: 0;
+  width: 28px;
+  height: 28px;
+  background: #0e639c;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: 600;
+  font-size: 13px;
+}
+
+.source-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.source-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: #4fc3f7;
+  margin-bottom: 6px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.source-snippet {
+  font-size: 12px;
+  color: #858585;
+  line-height: 1.4;
+  margin-bottom: 6px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.source-url {
+  font-size: 11px;
+  color: #6e6e6e;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .input-area {
   display: flex;
   align-items: flex-end;
@@ -153,6 +274,10 @@
 .action-btn:hover {
   background: #2d2d30;
   border-color: #007acc;
+}
+
+label.action-btn {
+  margin: 0;
 }
 
 .input-area textarea {

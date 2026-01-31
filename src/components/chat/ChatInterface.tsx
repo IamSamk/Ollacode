@@ -16,7 +16,10 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ sessionId }) => {
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [currentModel, setCurrentModel] = useState('qwen2.5:7b');
+  const [availableModels, setAvailableModels] = useState<string[]>([]);
   const [enableWebSearch, setEnableWebSearch] = useState(true);
+  const [searchResults, setSearchResults] = useState<any[]>([]);
+  const [isSearching, setIsSearching] = useState(false);
   
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const ollamaService = useRef(new OllamaService({ model: currentModel }));
@@ -26,11 +29,25 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ sessionId }) => {
   useEffect(() => {
     // Load previous messages from memory
     loadSession();
+    loadAvailableModels();
     
     return () => {
       memoryManager.current.destroy();
     };
   }, []);
+
+  const loadAvailableModels = async () => {
+    try {
+      const models = await ollamaService.current.listModels();
+      setAvailableModels(models);
+      if (models.length > 0 && !models.includes(currentModel)) {
+        setCurrentModel(models[0]);
+        ollamaService.current.setModel(models[0]);
+      }
+    } catch (error) {
+      console.error('Failed to load models:', error);
+    }
+  };
 
   useEffect(() => {
     scrollToBottom();
@@ -65,13 +82,17 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ sessionId }) => {
 
       // Check if we need web search
       let searchContext = '';
+      setSearchResults([]);
       if (enableWebSearch && shouldSearch(input)) {
-        const searchResults = await webSearchService.current.search({
+        setIsSearching(true);
+        const results = await webSearchService.current.search({
           query: input,
-          maxResults: 3
+          maxResults: 5
         });
+        setSearchResults(results);
+        setIsSearching(false);
         
-        searchContext = formatSearchResults(searchResults);
+        searchContext = formatSearchResults(results);
       }
 
       // Get relevant memory context
@@ -151,12 +172,42 @@ Provide detailed, well-reasoned responses. Cite sources when using web search re
     }
   };
 
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = async (event) => {
+      const content = event.target?.result as string;
+      const fileInfo = `[File: ${file.name} (${file.type})]
+
+${content.substring(0, 10000)}`;
+      setInput(prev => prev + '\n\n' + fileInfo);
+    };
+    reader.readAsText(file);
+  };
+
   return (
     <div className="chat-interface">
       <div className="chat-header">
         <div className="chat-info">
           <h2>AI Research Assistant</h2>
-          <span className="model-badge">{currentModel}</span>
+          <select 
+            className="model-selector"
+            value={currentModel}
+            onChange={(e) => {
+              setCurrentModel(e.target.value);
+              ollamaService.current.setModel(e.target.value);
+            }}
+          >
+            {availableModels.length === 0 ? (
+              <option>Loading models...</option>
+            ) : (
+              availableModels.map(model => (
+                <option key={model} value={model}>{model}</option>
+              ))
+            )}
+          </select>
         </div>
         <div className="chat-controls">
           <label className="toggle-label">
@@ -196,14 +247,51 @@ Provide detailed, well-reasoned responses. Cite sources when using web search re
           )
         ))}
 
+        {isSearching && (
+          <div className="searching-indicator">
+            <Loader2 className="spinning" size={20} />
+            <span>Searching the web...</span>
+          </div>
+        )}
+
+        {searchResults.length > 0 && (
+          <div className="search-sources">
+            <h4>🔍 Sources:</h4>
+            <div className="sources-grid">
+              {searchResults.map((result, index) => (
+                <a 
+                  key={index} 
+                  href={result.url} 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="source-card"
+                >
+                  <div className="source-index">{index + 1}</div>
+                  <div className="source-content">
+                    <div className="source-title">{result.title}</div>
+                    <div className="source-snippet">{result.snippet}</div>
+                    <div className="source-url">{new URL(result.url).hostname}</div>
+                  </div>
+                </a>
+              ))}
+            </div>
+          </div>
+        )}
+
         <div ref={messagesEndRef} />
       </div>
 
       <div className="input-area">
         <div className="input-actions">
-          <button className="action-btn" title="Attach file">
+          <label className="action-btn" title="Attach file">
             <Paperclip size={20} />
-          </button>
+            <input 
+              type="file" 
+              onChange={handleFileUpload}
+              style={{ display: 'none' }}
+              accept=".txt,.md,.json,.csv,.log,.py,.js,.ts,.tsx,.jsx,.java,.cpp,.c,.h,.html,.css,.xml,.yaml,.yml"
+            />
+          </label>
         </div>
 
         <textarea

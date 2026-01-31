@@ -102,51 +102,60 @@
   overflow: hidden;
   background: #1e1e1e;
   border: 1px solid #3e3e42;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
 }
 
 .code-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 8px 12px;
+  padding: 10px 16px;
   background: #252526;
   border-bottom: 1px solid #3e3e42;
 }
 
 .code-lang {
   font-size: 12px;
-  color: #858585;
+  color: #4fc3f7;
   text-transform: uppercase;
-  font-weight: 600;
+  font-weight: 700;
+  letter-spacing: 0.5px;
 }
 
 .copy-code {
-  padding: 4px 10px;
-  background: transparent;
-  border: 1px solid #3e3e42;
+  padding: 5px 12px;
+  background: #0e639c;
+  border: none;
   border-radius: 4px;
-  color: #cccccc;
+  color: white;
   font-size: 11px;
+  font-weight: 600;
   cursor: pointer;
   transition: all 0.2s;
 }
 
 .copy-code:hover {
-  background: #2d2d30;
-  border-color: #007acc;
+  background: #1177bb;
+  transform: translateY(-1px);
+}
+
+.copy-code:active {
+  transform: translateY(0);
 }
 
 .code-block pre {
   margin: 0;
   padding: 16px;
   overflow-x: auto;
+  background: #1e1e1e;
 }
 
 .code-block code {
   font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
   font-size: 13px;
-  line-height: 1.5;
+  line-height: 1.6;
   color: #d4d4d4;
+  display: block;
 }
 
 .message-citations {

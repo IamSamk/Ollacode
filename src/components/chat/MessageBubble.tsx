@@ -24,7 +24,7 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({ message }) => {
       if (part.startsWith('```')) {
         const match = part.match(/```(\w+)?\n([\s\S]*?)```/);
         if (match) {
-          const lang = match[1] || 'text';
+          const lang = match[1] || 'plaintext';
           const code = match[2];
           return (
             <div key={index} className="code-block">
@@ -33,21 +33,27 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({ message }) => {
                 <button className="copy-code" onClick={() => {
                   navigator.clipboard.writeText(code);
                 }}>
-                  Copy
+                  Copy Code
                 </button>
               </div>
-              <pre><code>{code}</code></pre>
+              <pre><code className={`language-${lang}`}>{code}</code></pre>
             </div>
           );
         }
       }
       
-      // Format inline code
+      // Format inline code and bold/italic
       return (
         <div key={index} className="text-content">
-          {part.split(/(`[^`]+`)/).map((segment, i) => {
+          {part.split(/(`[^`]+`|\*\*[^*]+\*\*|\*[^*]+\*)/).map((segment, i) => {
             if (segment.startsWith('`') && segment.endsWith('`')) {
               return <code key={i} className="inline-code">{segment.slice(1, -1)}</code>;
+            }
+            if (segment.startsWith('**') && segment.endsWith('**')) {
+              return <strong key={i}>{segment.slice(2, -2)}</strong>;
+            }
+            if (segment.startsWith('*') && segment.endsWith('*')) {
+              return <em key={i}>{segment.slice(1, -1)}</em>;
             }
             return <span key={i}>{segment}</span>;
           })}
