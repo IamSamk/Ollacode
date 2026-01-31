@@ -1,6 +1,7 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import Editor from '@monaco-editor/react';
 import { X, Plus } from 'lucide-react';
+import { invoke } from '@tauri-apps/api/core';
 import './EditorArea.css';
 
 interface OpenFile {
@@ -11,10 +12,24 @@ interface OpenFile {
   language?: string;
 }
 
-export const EditorArea: React.FC = () => {
+interface EditorAreaProps {
+  selectedFile?: string | null;
+}
+
+export const EditorArea: React.FC<EditorAreaProps> = ({ selectedFile }) => {
   const [openFiles, setOpenFiles] = useState<OpenFile[]>([]);
   const [activeFileIndex, setActiveFileIndex] = useState<number>(-1);
   const editorRef = useRef(null);
+
+  useEffect(() => {
+    if (selectedFile) {
+      openFile(selectedFile);
+    }
+  }, [selectedFile]);
+
+  const openFile = async (filePath: string) => {
+    await openFileFromPath(filePath);
+  };
 
   const getLanguageFromPath = (path: string): string => {
     const extension = path.split('.').pop()?.toLowerCase();
@@ -46,7 +61,7 @@ export const EditorArea: React.FC = () => {
     return languageMap[extension || ''] || 'plaintext';
   };
 
-  const openFile = async (path: string, name: string) => {
+  const openFileFromPath = async (path: string, name?: string) => {
     // Check if file is already open
     const existingIndex = openFiles.findIndex(file => file.path === path);
     if (existingIndex !== -1) {
@@ -55,12 +70,12 @@ export const EditorArea: React.FC = () => {
     }
 
     try {
-      // TODO: Read file content using Tauri API
-      const content = `// File: ${path}\n// Content will be loaded here...`;
+      const content = await invoke<string>('read_file_content', { path });
+      const fileName = name || path.split(/[/\\]/).pop() || path;
       
       const newFile: OpenFile = {
         path,
-        name,
+        name: fileName,
         content,
         isDirty: false,
         language: getLanguageFromPath(path)

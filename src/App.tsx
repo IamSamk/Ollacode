@@ -1,8 +1,15 @@
-import { MainLayout } from './components/Layout/MainLayout';
+import { useState } from 'react';
+import ChatInterface from './components/chat/ChatInterface';
 import './App.css';
 
 function App() {
-  return <MainLayout />;
+  const [sessionId] = useState(() => `session-${Date.now()}`);
+
+  return (
+    <div className="app">
+      <ChatInterface sessionId={sessionId} />
+    </div>
+  );
 }
 
 export default App;

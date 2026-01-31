@@ -12,17 +12,26 @@ export const MainLayout: React.FC = () => {
   const [chatHeight, setChatHeight] = useState(250);
   const [isTerminalVisible, setIsTerminalVisible] = useState(true);
   const [isChatVisible, setIsChatVisible] = useState(true);
+  const [selectedFile, setSelectedFile] = useState<string | null>(null);
+
+  const handleFileSelect = (filePath: string) => {
+    setSelectedFile(filePath);
+    // TODO: Load file content into editor
+  };
 
   return (
     <div className="main-layout">
       <div className="layout-container">
-        <Sidebar width={sidebarWidth} />
+        <Sidebar 
+          width={sidebarWidth} 
+          onFileSelect={handleFileSelect}
+        />
         <div className="center-content">
           <div className="editor-terminal-container">
             <div className="editor-container" style={{ 
               width: isTerminalVisible ? `calc(100% - ${terminalWidth}px)` : '100%' 
             }}>
-              <EditorArea />
+              <EditorArea selectedFile={selectedFile} />
             </div>
             {isTerminalVisible && (
               <div className="terminal-container" style={{ width: terminalWidth }}>

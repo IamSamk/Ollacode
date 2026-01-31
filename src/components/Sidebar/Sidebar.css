@@ -8,9 +8,85 @@
 }
 
 .sidebar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   padding: 12px 16px;
   border-bottom: 1px solid #3e3e3e;
   background-color: #2d2d30;
+}
+
+.toolbar-buttons {
+  display: flex;
+  gap: 4px;
+}
+
+.toolbar-button {
+  background: none;
+  border: none;
+  padding: 4px;
+  cursor: pointer;
+  border-radius: 3px;
+  color: #858585;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.toolbar-button:hover:not(:disabled) {
+  background: #383838;
+  color: #cccccc;
+}
+
+.toolbar-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.current-directory {
+  padding: 4px 16px;
+  font-size: 11px;
+  color: #858585;
+  background: #323233;
+  border-bottom: 1px solid #3e3e3e;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.loading-indicator {
+  padding: 20px 16px;
+  text-align: center;
+  color: #858585;
+  font-style: italic;
+  font-size: 13px;
+}
+
+.empty-state {
+  padding: 20px 16px;
+  text-align: center;
+  color: #858585;
+}
+
+.empty-state p {
+  margin: 0 0 12px 0;
+  font-size: 13px;
+}
+
+.open-folder-button {
+  background: #0e639c;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 3px;
+  cursor: pointer;
+  font-size: 12px;
+  transition: background-color 0.2s ease;
+}
+
+.open-folder-button:hover {
+  background: #1177bb;
 }
 
 .sidebar-header h3 {

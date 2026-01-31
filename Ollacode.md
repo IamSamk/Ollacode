@@ -202,3 +202,74 @@ Build a **professional, privacy-focused, and fully featured cross-platform AI-po
 - Consider open-source engagement to encourage contribution and extension catalog growth in Open VSX.
 
 ***
+## Development Roadmap and Execution Strategy (Updated)
+
+Customized Memory Context Processor (MCP)
+To enable advanced, context-aware AI assistance and project-wide intelligence, the IDE will incorporate a robust Memory Context Processor (MCP) module. The MCP is responsible for aggregating, storing, retrieving, and orchestrating all relevant memory—across the user’s session, project files, logs, and prior AI conversations—to provide accurate, consistent prompts and recommendations from the LLM and ensure deep IDE feature integration.
+
+Key MCP Features
+Active Session and Project Memory
+
+Continuously tracks open files, selections, edit history, terminal/command output, and chat interactions.
+
+Maintains a dynamic, real-time context graph, ensuring the LLM receives the most relevant and recent information.
+
+Context Assembly for LLM Prompts
+
+Automatically builds prompt payloads for the LLM by combining current file(s), related project fragments, chat history, command logs, and any user-pinned or prioritized memory.
+
+Adapts context scope dynamically to model token limits and user preference (e.g., “current window,” “last 5 files,” summarized history).
+
+Persistence and Recall
+
+Efficient, persistent session storage allows restoration after app restarts or crashes.
+
+Workspaces may be saved and loaded, capturing multi-file context, discussions, and important memory pins as needed.
+
+User Transparency and Customization
+
+“Memory Inspector” panel enables users to review, pin/unpin, adjust, or clear memory/context elements included in any prompt.
+
+Promotes privacy, debuggability, and precise control over what the AI “sees.”
+
+Project Indexing and Scalability
+
+In the background, MCP indexes the project’s files, symbols, and logs—delivering rapid access and relevant context without performance loss in large codebases.
+
+Extension/Plugin API
+
+Expose MCP interface for plugins to read/write auxiliary context, enabling advanced third-party workflows.
+
+Implementation:
+Build the MCP as a Rust backend service tightly coupled to the Tauri core and mirrored by React Context for real-time frontend UI sync. Clearly separate memory/context logic from both the UI and prompt-building components to support future extensibility and easy maintenance.
+
+Internet-Connected Real-Time Information Retrieval
+Professional development in modern environments requires up-to-date context and easy access to web-based knowledge. To achieve this, the IDE will include a Real-Time Internet Information Module for both manual exploration and optional AI-augmented information retrieval.
+
+Main Features
+In-IDE Web Search & Technical Data APIs
+
+Enable users and the AI to submit search queries (errors, function names, dependency questions) directly to the web through reliable search/data APIs (e.g., Bing, Google, Stack Overflow, GitHub).
+
+Embed a “search the web” box, one-click tooltips, and integrated inline help throughout the code editor and terminal.
+
+LLM-Driven Web Augmentation
+
+The LLM or agent can request MCP to fetch live web results for the latest docs, bug explanations, or troubleshooting, which are summarized and/or cited within user prompts.
+
+Returned data (with sources) is injected into AI context, allowing for real-time, accurate suggestions.
+
+Documentation and Web Panels
+
+Open search results or official docs within an embedded mini-browser or panel inside the application, preserving developer focus.
+
+Pin or save relevant findings in the MCP for persistent availability.
+
+Hybrid Context & Security
+
+MCP fuses local project memory and relevant remote findings in each AI request, optimizing completeness and technical currency.
+
+User controls, permissions, and ToS compliance: All online access is opt-in and reviewable by the user for security and transparency.
+
+Implementation:
+Integrate async HTTP clients (Rust/JS) for search API calls, modular React panels for presentation, and a configurable permissions layer for data access. Provide clear user documentation and granular UI settings (privacy, allow-listing, API keys) for safe, responsible operation.

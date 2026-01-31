@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { FolderOpen, File, ChevronRight, ChevronDown, Search } from 'lucide-react';
+import { FolderOpen, File, ChevronRight, ChevronDown, Search, Folder } from 'lucide-react';
+import { invoke } from '@tauri-apps/api/core';
+import { open } from '@tauri-apps/plugin-dialog';
 import './Sidebar.css';
 
 interface FileItem {
@@ -12,28 +14,83 @@ interface FileItem {
 
 interface SidebarProps {
   width: number;
+  onFileSelect?: (filePath: string) => void;
 }
 
-export const Sidebar: React.FC<SidebarProps> = ({ width }) => {
+export const Sidebar: React.FC<SidebarProps> = ({ width, onFileSelect }) => {
   const [files, setFiles] = useState<FileItem[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedFile, setSelectedFile] = useState<string | null>(null);
+  const [currentDirectory, setCurrentDirectory] = useState<string>('');
+  const [isLoading, setIsLoading] = useState(false);
 
   const loadDirectory = async (path: string = ''): Promise<FileItem[]> => {
     try {
-      // For now, let's create some dummy files to test the UI
-      if (path === '') {
-        return [
-          { name: 'src', path: 'src', isDirectory: true, children: [] },
-          { name: 'package.json', path: 'package.json', isDirectory: false },
-          { name: 'README.md', path: 'README.md', isDirectory: false },
-          { name: 'tsconfig.json', path: 'tsconfig.json', isDirectory: false },
-        ];
+      setIsLoading(true);
+      
+      // Check if invoke is available
+      if (typeof invoke === 'undefined') {
+        console.error('Tauri invoke function not available');
+        return [];
       }
-      return [];
+      
+      const entries = await invoke<FileItem[]>('read_directory', { 
+        path: path || currentDirectory 
+      });
+      
+      return entries.map(entry => ({
+        name: entry.name,
+        path: entry.path,
+        isDirectory: entry.isDirectory,
+        children: entry.isDirectory ? [] : undefined,
+        isExpanded: false
+      }));
     } catch (error) {
       console.error('Error reading directory:', error);
       return [];
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const openFolder = async () => {
+    try {
+      // Check if open function is available
+      if (typeof open === 'undefined') {
+        console.error('Tauri dialog open function not available');
+        return;
+      }
+
+      const selected = await open({
+        directory: true,
+        multiple: false,
+        title: 'Select Folder to Open'
+      });
+      
+      if (selected && typeof selected === 'string') {
+        setCurrentDirectory(selected);
+        const directoryContents = await loadDirectory(selected);
+        setFiles(directoryContents);
+      }
+    } catch (error) {
+      console.error('Error opening folder:', error);
+    }
+  };
+
+  const openFile = async () => {
+    try {
+      const selected = await open({
+        directory: false,
+        multiple: false,
+        title: 'Select File to Open'
+      });
+      
+      if (selected && typeof selected === 'string') {
+        setSelectedFile(selected);
+        onFileSelect?.(selected);
+      }
+    } catch (error) {
+      console.error('Error opening file:', error);
     }
   };
 
@@ -87,7 +144,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ width }) => {
                 toggleDirectory(item);
               } else {
                 setSelectedFile(item.path);
-                // TODO: Open file in editor
+                onFileSelect?.(item.path);
               }
             }}
           >
@@ -116,7 +173,32 @@ export const Sidebar: React.FC<SidebarProps> = ({ width }) => {
     <div className="sidebar" style={{ width }}>
       <div className="sidebar-header">
         <h3>Explorer</h3>
+        <div className="toolbar-buttons">
+          <button 
+            className="toolbar-button" 
+            onClick={openFolder}
+            title="Open Folder"
+            disabled={isLoading}
+          >
+            <Folder size={16} />
+          </button>
+          <button 
+            className="toolbar-button" 
+            onClick={openFile}
+            title="Open File"
+            disabled={isLoading}
+          >
+            <File size={16} />
+          </button>
+        </div>
       </div>
+      {currentDirectory && (
+        <div className="current-directory">
+          <span title={currentDirectory}>
+            📁 {currentDirectory.split(/[/\\]/).pop() || currentDirectory}
+          </span>
+        </div>
+      )}
       <div className="search-container">
         <div className="search-input-container">
           <Search size={16} className="search-icon" />
@@ -130,7 +212,18 @@ export const Sidebar: React.FC<SidebarProps> = ({ width }) => {
         </div>
       </div>
       <div className="file-tree">
-        {renderFileTree(files)}
+        {isLoading ? (
+          <div className="loading-indicator">Loading...</div>
+        ) : files.length === 0 && !currentDirectory ? (
+          <div className="empty-state">
+            <p>No folder open</p>
+            <button className="open-folder-button" onClick={openFolder}>
+              Open Folder
+            </button>
+          </div>
+        ) : (
+          renderFileTree(files)
+        )}
       </div>
     </div>
   );

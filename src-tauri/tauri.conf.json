@@ -4,12 +4,13 @@
   "version": "0.1.0",
   "identifier": "com.samarth-kadam.ollacode",
   "build": {
-    "beforeDevCommand": "pnpm dev",
+    "beforeDevCommand": "pnpm dev-web",
     "devUrl": "http://localhost:1420",
     "beforeBuildCommand": "pnpm build",
     "frontendDist": "../dist"
   },
   "app": {
+    "withGlobalTauri": true,
     "windows": [
       {
         "title": "Ollacode - AI-Powered IDE",
@@ -20,11 +21,18 @@
         "resizable": true,
         "maximized": false,
         "visible": true,
-        "decorations": true
+        "decorations": true,
+        "center": true,
+        "focus": true,
+        "alwaysOnTop": false
       }
     ],
     "security": {
-      "csp": null
+      "csp": null,
+      "assetProtocol": {
+        "enable": true,
+        "scope": ["**"]
+      }
     }
   },
   "bundle": {
