@@ -61,6 +61,7 @@
 - Code: .py, .js, .ts, .tsx, .jsx, .java, .cpp, .c, .h
 - Web: .html, .css, .xml
 - Data: .json, .csv, .yaml, .yml
+- Notebooks: .ipynb (Jupyter Notebooks - parsed and formatted)
 
 **How to use:**
 1. Click paperclip icon (📎)

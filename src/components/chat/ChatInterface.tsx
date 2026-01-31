@@ -179,9 +179,34 @@ Provide detailed, well-reasoned responses. Cite sources when using web search re
     const reader = new FileReader();
     reader.onload = async (event) => {
       const content = event.target?.result as string;
-      const fileInfo = `[File: ${file.name} (${file.type})]
+      let fileInfo = '';
+
+      // Check if it's a Jupyter Notebook
+      if (file.name.endsWith('.ipynb')) {
+        try {
+          const { parseNotebook, formatNotebookForChat, summarizeNotebook } = 
+            await import('../../utils/notebookParser');
+          
+          const parsed = parseNotebook(content);
+          
+          if (parsed) {
+            const summary = summarizeNotebook(parsed);
+            const formattedContent = formatNotebookForChat(parsed, file.name);
+            fileInfo = `${summary}\n\n${formattedContent}`;
+          } else {
+            fileInfo = `[File: ${file.name}]\n\n⚠️ Failed to parse notebook. Using raw content:\n\n${content.substring(0, 5000)}`;
+          }
+        } catch (error) {
+          console.error('Error processing notebook:', error);
+          fileInfo = `[File: ${file.name}]\n\n⚠️ Error reading notebook\n\n${content.substring(0, 5000)}`;
+        }
+      } else {
+        // Regular text file
+        fileInfo = `[File: ${file.name} (${file.type})]
 
 ${content.substring(0, 10000)}`;
+      }
+
       setInput(prev => prev + '\n\n' + fileInfo);
     };
     reader.readAsText(file);
@@ -289,7 +314,7 @@ ${content.substring(0, 10000)}`;
               type="file" 
               onChange={handleFileUpload}
               style={{ display: 'none' }}
-              accept=".txt,.md,.json,.csv,.log,.py,.js,.ts,.tsx,.jsx,.java,.cpp,.c,.h,.html,.css,.xml,.yaml,.yml"
+              accept=".txt,.md,.json,.csv,.log,.py,.js,.ts,.tsx,.jsx,.java,.cpp,.c,.h,.html,.css,.xml,.yaml,.yml,.ipynb"
             />
           </label>
         </div>
